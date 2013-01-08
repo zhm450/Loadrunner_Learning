@@ -1,0 +1,214 @@
+/*
+---------------------
+lr_advance_param(const char *param);
+使指定的参数获取下一个可用值
+
+示例程序中：参数WEB有两个值 baidu,bing ;
+---------------------
+*/
+
+Action()
+{
+	web_url("WEBSite",
+			"URL=http://www.{WEB}.com",
+			"Resource=0",
+			"Mode=HTML",
+			LAST);
+	lr_advance_param("WEB");
+
+	lr_message("下一个参数值为:%s",lr_eval_string("{WEB}"));
+
+	
+	web_url("WEBSite",
+			"URL=http://www.{WEB}.com",
+			"Resource=0",
+			"Mode=HTML",
+			LAST);
+
+
+	return 0 ;
+}
+
+/*
+输出结果为
+---------------------
+Starting action Action.
+Action.c(7): Found resource "http://www.baidu.com/img/baidu_sylogo1.gif" in HTML "http://www.baidu.com"  	[MsgId: MMSG-26659]
+Action.c(7): Found resource "http://s1.bdstatic.com/r/www/cache/user/js/u-1.3.4.js" in HTML "http://www.baidu.com"  	[MsgId: MMSG-26659]
+Action.c(7): web_url("WEBSite") was successful, 24799 body bytes, 2268 header bytes, 38 chunking overhead bytes  	[MsgId: MMSG-26385]
+下一个参数值为:bing
+Action.c(17): Redirecting "http://www.bing.com" (redirection depth is 0)  	[MsgId: MMSG-26694]
+Action.c(17): To location "http://cn.bing.com/"  	[MsgId: MMSG-26693]
+Action.c(17): web_url("WEBSite") was successful, 15291 body bytes, 1329 header bytes, 18 chunking overhead bytes  	[MsgId: MMSG-26385]
+Ending action Action.
+---------------------
+*/
+
+/*
+---------------------
+char * lr_decrypt(const char *EncodedString)
+解译密文，并返回解释后的值
+
+示例程序中：反译出密文的值为 Welcome;
+---------------------
+
+*/
+
+
+Action()
+{
+	char chr[32] ,*stri;
+	stri = lr_decrypt("38620da61ca1093e7aa7ec");
+	lr_message("%s",stri);
+
+	return 0 ;
+}
+
+
+/*
+输出结果为
+---------------------
+Starting action Action.
+WELCOME
+Ending action Action.
+---------------------
+
+*/
+
+
+/*
+---------------------
+char *lr_eval_string( const char *instring ); 
+
+从程序参数中，返回字符串值
+
+int lr_save_string( const char *param_value, const char *param_name); 
+
+
+示例程序中：
+
+---------------------
+
+*/
+
+Action()
+{
+	char *web;
+	lr_save_string("163","web");
+	lr_message("%s",lr_eval_string("the web value is {web} "));
+
+	return 0 ;
+}
+
+/*
+输出结果为
+---------------------
+Starting action Action.
+the web value is 163 
+Ending action Action.
+---------------------
+
+*/
+
+
+
+/*
+---------------------
+int lr_next_row( const char *dat_file ); 
+参数说明：参数化的文件名称  如username.dat 
+
+示例程序：
+---------------------
+*/
+
+Action()
+{
+
+	web_url("WEBSite",
+			"URL=http://www.{WEB}.com",
+			"Resource=0",
+			"Mode=HTML",
+			LAST);
+
+	lr_next_row("WEB.dat");
+
+	lr_message("下一个参数值为:%s",lr_eval_string("{WEB}"));
+	
+	web_url("WEBSite",
+			"URL=http://www.{WEB}.com",
+			"Resource=0",
+			"Mode=HTML",
+			LAST);
+
+	return 0 ;
+}
+
+
+/*
+输出结果为
+---------------------
+Action.c(10): Found resource "http://www.baidu.com/img/baidu_sylogo1.gif" in HTML "http://www.baidu.com"  	[MsgId: MMSG-26659]
+Action.c(10): Found resource "http://www.baidu.com/cache/global/img/gs.gif" in HTML "http://www.baidu.com"  	[MsgId: MMSG-26659]
+Action.c(15): Notify: Transaction "baidu" ended with "Pass" status (Duration: 2.0035 Wasted Time: 0.9352).
+下一个参数值为:bing
+Action.c(31): Redirecting "http://www.bing.com" (redirection depth is 0)  	[MsgId: MMSG-26694]
+---------------------
+*/
+
+
+
+
+/*
+---------------------
+int lr_save_int( int value, const char *param_name); 
+将整形值保存到参数 param_name 中
+该函数会先将整形值转为string，然后保存到参数中，如果该参数不存在，则会自动创建
+
+示例程序：
+---------------------
+*/
+Action()
+{
+
+	int num;
+	num = 5 ;
+	lr_save_int(num * 2,"param1");
+	lr_message("%s",lr_eval_string("{param1}"));
+	
+	return 0 ;
+}
+
+输出结果为 10 ；
+
+
+
+/*
+---------------------
+int lr_save_var( const char *param_value, unsigned long const value_len, unsigned long const options, const char *param_name); 
+param_value  		The value to assign to a parameter.  
+value_len 			The length of the value in bytes.  
+options 			A parameter option, currently 0.  
+param_name  		The name of the parameter.  
+
+
+示例程序中：
+
+---------------------
+*/
+Action()
+{
+	char *longString = "abcdefg" ;
+	lr_save_var(longString,4,0,"shortString");
+	lr_message("%s",lr_eval_string("{shortString}"));
+	return 0;
+}
+
+/*
+输出结果为
+---------------------
+
+Action.c(4): Notify: Saving Parameter "shortString = abcd".
+Action.c(6): Notify: Parameter Substitution: parameter "shortString" =  "abcd"
+
+---------------------
+*/
